@@ -177,7 +177,7 @@ const BuyToken = async (txLP) => {
     }
   );
   console.log("💰 LP: " + txLP.hash);
-  console.log("🔫 Sniped: " + tx.hash);
+  console.log(`🔫 Sniped: ${explorer}/tx/${tx.hash}`);
   process.exit();
 };
 startConnection();
