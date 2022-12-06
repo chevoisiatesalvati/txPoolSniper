@@ -12,6 +12,7 @@ const KEEP_ALIVE_CHECK_INTERVAL = 15000;
 let pingTimeout = null;
 let keepAliveInterval = null;
 let provider;
+let explorer;
 let wallet;
 let account;
 let router;
@@ -27,6 +28,7 @@ async function Wait(seconds) {
 
 const startConnection = () => {
   provider = new ethers.providers.WebSocketProvider(process.env.BSC_NODE_WSS);
+  explorer = process.env.EXPLORER;
   wallet = new ethers.Wallet(process.env.PRIVATE_KEY);
   account = wallet.connect(provider);
   router = new ethers.Contract(tokens.router, pcsAbi, account);
@@ -133,7 +135,7 @@ const BuyToken = async (txLP) => {
     async () => {
       const amountOutMin = 0; // I don't like this but it works
       if (swapEth) {
-        const reciept = await router.swapExactETHForTokens(
+        const receipt = await router.swapExactETHForTokens(
           amountOutMin,
           tokens.pair,
           process.env.RECIPIENT,
@@ -144,9 +146,9 @@ const BuyToken = async (txLP) => {
             gasPrice: txLP.gasPrice,
           }
         );
-        return reciept;
+        return receipt;
       } else {
-        const reciept = await router.swapExactTokensForTokens(
+        const receipt = await router.swapExactTokensForTokens(
           purchaseAmount,
           amountOutMin,
           tokens.pair,
@@ -157,7 +159,7 @@ const BuyToken = async (txLP) => {
             gasPrice: txLP.gasPrice,
           }
         );
-        return reciept;
+        return receipt;
       }
     },
     {
